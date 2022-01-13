@@ -1,0 +1,20 @@
+[package]
+name = "tinyedge-kubelet"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.52"
+async-trait = "0.1.52"
+kube = { version = "0.60", default-features = false }
+kubelet = { git = "https://github.com/krustlet/krustlet", branch = "main", default-features = false, features = ["cli", "kube-native-tls"] }
+k8s-openapi = { version = "0.13", default-features = false, features = ["v1_22"] }
+tokio = { version = "1.15.0", features = ["macros", "rt-multi-thread"] }
+
+[profile.release]
+opt-level = 'z'     # Optimize for size.
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
