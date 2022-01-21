@@ -1,17 +1,25 @@
 use kubelet::config::Config;
 use kubelet::Kubelet;
+use std::path::PathBuf;
+use std::sync::Arc;
 
-mod provider;
+mod myprovider;
+mod states;
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> anyhow::Result<()> {
-    let provider = provider::MyProvider;
-
-    // Get a configuration for the Kubelet
+    // Get a configuration for the Kubelet`
     let kubelet_config = Config::new_from_file_and_flags(env!("CARGO_PKG_VERSION"), None);
 
     // Load a kubernetes configuration
     let kubeconfig = kubelet::bootstrap(&kubelet_config, &kubelet_config.bootstrap_file, notify_bootstrap).await?;
+
+    let store = Arc::new(
+        kubelet::store::oci::FileStore::new(
+            oci_distribution::client::Client::default(),
+            &PathBuf::from("")));
+
+    let provider = myprovider::MyProvider::new(kubeconfig.clone(), store).await?;
 
     // Instantiate the Kubelet
     let kubelet = Kubelet::new(provider, kubeconfig, kubelet_config).await.unwrap();

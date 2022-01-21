@@ -966,6 +966,7 @@ dependencies = [
  "async-trait",
  "futures",
  "k8s-openapi",
+ "krator-derive",
  "kube",
  "kube-runtime",
  "serde",
@@ -974,6 +975,17 @@ dependencies = [
  "tokio-stream",
  "tracing",
  "tracing-futures",
+]
+
+[[package]]
+name = "krator-derive"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fa674a23c40b90b24a035eef7db57622b8012a6d22725f7f777c28ce91106d7"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -2195,8 +2207,10 @@ dependencies = [
  "anyhow",
  "async-trait",
  "k8s-openapi",
+ "krator",
  "kube",
  "kubelet",
+ "oci-distribution",
  "tokio 1.15.0",
 ]
 
