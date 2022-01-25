@@ -1,5 +1,5 @@
 use kubelet::pod::Pod;
-use kubelet::state::common::{GenericProviderState};
+use kubelet::state::common::GenericProviderState;
 use kubelet::store::Store;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -9,7 +9,7 @@ use std::sync::Arc;
 pub struct ProviderState {
     pub client: kube::Client,
     pub volume_path: PathBuf,
-    pub store: Arc<dyn Store + Sync + Send>
+    pub store: Arc<dyn Store + Sync + Send>,
 }
 
 #[async_trait::async_trait]
@@ -18,7 +18,7 @@ impl GenericProviderState for ProviderState {
         self.client.clone()
     }
 
-    fn store(&self) -> std::sync::Arc<dyn kubelet::store::Store+Sync+Send>  {
+    fn store(&self) -> std::sync::Arc<dyn kubelet::store::Store + Sync + Send> {
         self.store.clone()
     }
 

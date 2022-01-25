@@ -1,12 +1,12 @@
-use kubelet::resources::DeviceManager;
 use kubelet::node::Builder;
 use kubelet::plugin_watcher::PluginRegistry;
 use kubelet::pod::state::prelude::SharedState;
 use kubelet::pod::Pod;
-use kubelet::provider::{DevicePluginSupport, Provider, PluginSupport, VolumeSupport};
+use kubelet::provider::{DevicePluginSupport, PluginSupport, Provider, VolumeSupport};
+use kubelet::resources::DeviceManager;
+use kubelet::state::common::registered::Registered;
 use kubelet::state::common::terminated::Terminated;
 use kubelet::state::common::GenericProvider;
-use kubelet::state::common::registered::Registered;
 use kubelet::store::Store;
 use kubelet::volume::VolumeRef;
 use std::collections::HashMap;
@@ -50,7 +50,15 @@ impl Provider for MyProvider {
         Ok(PodState::new(pod))
     }
 
-    async fn logs(&self, _namespace: String, _pod: String, _container: String, _sender: kubelet::log::Sender) -> anyhow::Result<()> { todo!() }
+    async fn logs(
+        &self,
+        _namespace: String,
+        _pod: String,
+        _container: String,
+        _sender: kubelet::log::Sender,
+    ) -> anyhow::Result<()> {
+        todo!()
+    }
 }
 
 impl PluginSupport for ProviderState {
@@ -82,7 +90,9 @@ impl GenericProvider for MyProvider {
         Ok(())
     }
 
-    fn validate_container_runnable(container: &kubelet::container::Container) -> anyhow::Result<()> {
+    fn validate_container_runnable(
+        container: &kubelet::container::Container,
+    ) -> anyhow::Result<()> {
         if let Some(image) = container.image()? {
             if !image.whole().starts_with(IMAGE_REPO) {
                 return Err(anyhow::anyhow!("Repository must be '{}'.", &IMAGE_REPO));
@@ -103,14 +113,13 @@ impl MyProvider {
         kubeconfig: kube::Config,
         store: Arc<dyn Store + Sync + Send>,
     ) -> anyhow::Result<Self> {
-
         let client = kube::Client::try_from(kubeconfig)?;
 
         Ok(Self {
             shared: ProviderState {
                 client: client,
                 volume_path: PathBuf::from("/tmp"),
-                store: store
+                store: store,
             },
         })
     }

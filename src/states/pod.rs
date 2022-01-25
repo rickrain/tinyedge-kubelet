@@ -1,16 +1,16 @@
-use krator::{ObjectState,SharedState};
-use kubelet::backoff::{BackoffStrategy,ExponentialBackoffStrategy};
-use kubelet::pod::{Pod,PodKey,Status};
-use kubelet::state::common::{BackoffSequence,GenericPodState,ThresholdTrigger};
+use crate::states::provider::ProviderState;
+use krator::{ObjectState, SharedState};
+use kubelet::backoff::{BackoffStrategy, ExponentialBackoffStrategy};
+use kubelet::pod::{Pod, PodKey, Status};
+use kubelet::state::common::{BackoffSequence, GenericPodState, ThresholdTrigger};
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use crate::states::provider::ProviderState;
 
-pub(crate) mod initializing;
-pub(crate) mod starting;
-pub(crate) mod running;
 pub(crate) mod completed;
+pub(crate) mod initializing;
+pub(crate) mod running;
+pub(crate) mod starting;
 
 // Track pod state amongst pod state handlers.
 pub struct PodState {

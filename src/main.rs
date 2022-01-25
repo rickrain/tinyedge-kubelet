@@ -22,16 +22,21 @@ async fn main() -> anyhow::Result<()> {
     // The bootstrap process happens on first run, whereby TLS certificates and the certificate
     // signing request (CSR) are created before the node can join the cluster.
     info!("Bootstrapping process for kubelet.");
-    let kubeconfig = kubelet::bootstrap(&kubelet_config, &kubelet_config.bootstrap_file, notify_bootstrap).await?;
+    let kubeconfig = kubelet::bootstrap(
+        &kubelet_config,
+        &kubelet_config.bootstrap_file,
+        notify_bootstrap,
+    )
+    .await?;
 
     // Configure the file store to persist container images on the host
     info!("Configuring file store for images.");
     let mut store_path = kubelet_config.data_dir.join(".oci");
     store_path.push("modules");
-    let store = Arc::new(
-        kubelet::store::oci::FileStore::new(
-            oci_distribution::Client::from_source(&kubelet_config),
-            &store_path));
+    let store = Arc::new(kubelet::store::oci::FileStore::new(
+        oci_distribution::Client::from_source(&kubelet_config),
+        &store_path,
+    ));
 
     // Create our provider that has our custom kubelet logic.
     info!("Creating provider instance.");
@@ -39,8 +44,10 @@ async fn main() -> anyhow::Result<()> {
 
     // Instantiate the Kubelet using an instance of our provider.
     info!("Creating kubelet instance.");
-    let kubelet = Kubelet::new(provider, kubeconfig, kubelet_config).await.unwrap();
-    
+    let kubelet = Kubelet::new(provider, kubeconfig, kubelet_config)
+        .await
+        .unwrap();
+
     // Start the Kubelet and block on it.
     info!("Staring kubelet.");
     Ok(kubelet.start().await.unwrap())

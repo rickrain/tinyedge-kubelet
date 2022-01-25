@@ -1,8 +1,8 @@
-use kubelet::state::TransitionTo;
 use kubelet::pod::state::prelude::*;
+use kubelet::state::TransitionTo;
 
-use crate::states::pod::{PodState,ProviderState};
 use super::completed::Completed;
+use crate::states::pod::{PodState, ProviderState};
 
 #[derive(Default, Debug, TransitionTo)]
 #[transition_to(Completed)]
@@ -23,5 +23,5 @@ impl State<PodState> for Running {
 
     async fn status(&self, _pod_state: &mut PodState, _pod: &Pod) -> anyhow::Result<PodStatus> {
         Ok(make_status(Phase::Succeeded, "Running"))
-    } 
+    }
 }

@@ -1,4 +1,4 @@
-use crate::states::pod::{PodState,ProviderState};
+use crate::states::pod::{PodState, ProviderState};
 use kubelet::pod::state::prelude::*;
 
 /// Pod was deleted.
